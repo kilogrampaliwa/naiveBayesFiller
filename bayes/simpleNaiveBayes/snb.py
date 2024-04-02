@@ -1,8 +1,9 @@
 from sklearn.naive_bayes import BernoulliNB
+from typing import Union
 
 class sklearnBasis:
 
-    def __init__(self, X_train: list[list[float]], Y_train: list[float], X_test : list[float]|bool = False):
+    def __init__(self, X_train: list[list[int]], Y_train: list[int], X_test : Union[list[int], bool] = False):
         "Initializes Bernoulli Naive Bayes and training first probe."
 
         # result
@@ -18,18 +19,18 @@ class sklearnBasis:
         if X_test: self.__call__(X_test)
 
 
-    def __call__(self, X_test : list[float]):
+    def __call__(self, X_test : list[int]):
         "Returns prediction based on trained model."
         self.__prediction(X_test)
         return self.__result
 
 
-    def retrain(self,  X_train: list[float], Y_train: list[float]):
+    def retrain(self,  X_train: list[int], Y_train: list[int]):
         "Trains model again."
         self.__clf.fit(X_train, Y_train)
 
 
-    def __prediction(self, X_test : list[float]):
+    def __prediction(self, X_test : list[int]):
         "Prediction based on trained model."
         self.__result = self.__clf.predict(X_test)
         #self.__result = self.__clf.predict_proba(X_test)

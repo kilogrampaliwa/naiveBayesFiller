@@ -1,9 +1,9 @@
-
+from typing import Union
 
 
 class one_element:
 
-    def __init__(self, coordinates: list[int, int]|bool = False, test_percent_existing: int = 0, replacement_type: str = "mean"):
+    def __init__(self, coordinates: Union[list[int, int], bool] = False, test_percent_existing: int = 0, replacement_type: str = "mean"):
         """
         Choose proper strategy parameters.
 
@@ -17,6 +17,7 @@ class one_element:
         self.__coordinates           = False
 
         # using public functions to save attributes
+        print( test_percent_existing)
         self.change_test_percent_existing(test_percent_existing)
         self.change_test_replace_type(replacement_type)
         if coordinates: self.change_coordinates(coordinates)
@@ -29,7 +30,7 @@ class one_element:
 
     def change_test_percent_existing(self, test_percent_existing: int):
         "Changing class parameter, give int in range 0-100."
-
+        print( test_percent_existing)
         # if given input is corresponding
         if test_percent_existing >= 0 and test_percent_existing <= 100:
             self.__test_percent_existing = test_percent_existing
@@ -56,7 +57,7 @@ class one_element:
 
         # if given value is not considerable
         else:
-            message = "Wrong attribute given, choose one of mentioned."
+            message = "Wrong attribute given, choose one of mentioned. [one_elemenet, change_test_replace_type, not] "+str(replacement_type)
             print(message)
             return [False, message]
 
@@ -125,7 +126,7 @@ class one_element:
 
 class series_column(one_element):
 
-    def __init__(self, which_column: int|bool = False, test_percent_existing: int = 0, replacement_type: str = "mean", row_order: str|list[int] = "up_to_down"):
+    def __init__(self, which_column: Union[int, bool] = False, test_percent_existing: int = 0, replacement_type: str = "mean", row_order: Union[str, list[int]] = "up_to_down"):
         """
         Choose proper strategy parameters.
 
@@ -136,23 +137,24 @@ class series_column(one_element):
         """
 
         # executing init function from parent class
-        super().__init__(test_percent_existing, replacement_type)
+        super().__init__(False, test_percent_existing=test_percent_existing, replacement_type=replacement_type)
+        #super().__init__(test_percent_existing, replacement_type)
 
         # default attributes (false if not given)
         self.__row_order       = False
-        self.__row             = False
+        self.__column             = False
 
         # using public functions to save attributes
         self.change_row_order(row_order)
-        if which_column: self.change_row(which_column)
+        if which_column: self.change_column(which_column)
 
 
     def change_column(self, which_column: int):
         "Change row."
-        self.__row = which_column
+        self.__column = which_column
 
 
-    def change_row_order(self, row_order: str|list[int]):
+    def change_row_order(self, row_order: Union[str, list[int]]):
         """
         Changing execute order, type, give one of below:
         "up_to_down", "down_to_up"
@@ -169,7 +171,7 @@ class series_column(one_element):
 
             # if given input is not considerable
             else:
-                message = "Wrong attribute given, choose one of mentioned."
+                message = "Wrong attribute given, choose one of mentioned. [series_column, change_row_order, str] " + str(row_order)
                 print(message)
                 return [False, message]
 
@@ -189,7 +191,7 @@ class series_column(one_element):
 
         # if given value is not considerable
         else:
-            message = "Wrong attribute given, choose one of mentioned."
+            message = "Wrong attribute given, choose one of mentioned. [series_column, change_row_order, not] " + str(row_order)
             print(message)
             return [False, message]
 
@@ -244,7 +246,7 @@ class series_column(one_element):
 
 class series_table(series_column):
 
-    def __init__(self, test_percent_existing: int = 0, replacement_type: str = "mean", include_results: bool = False, in_row_order: str|list[int] = "left_to_right", in_column_order: str|list[int] = "up_to_down"):
+    def __init__(self, test_percent_existing: int = 0, replacement_type: str = "mean", include_results: bool = False, in_row_order: Union[str, list[int]] = "up_to_down", in_column_order: Union[str, list[int]] = "left_to_right"):#in_row_order: Union[str, list[int]] = "left_to_right", in_column_order: Union[str, list[int]] = "up_to_down")
         """
         Choose proper strategy parameters.
 
@@ -257,7 +259,7 @@ class series_table(series_column):
         """
 
         # executing init function from parent class
-        super().__init__(test_percent_existing, replacement_type, in_column_order)
+        super().__init__(False, test_percent_existing=test_percent_existing, replacement_type=replacement_type, row_order=in_row_order)
 
         # default attributes (false if not given)
         self.__in_row_order         = False
@@ -268,7 +270,7 @@ class series_table(series_column):
         self.change_include_results(include_results)
 
 
-    def change_row_order(self, in_row_order: str|list[int]):
+    def change_row_order(self, in_row_order: Union[str, list[int]]):
         """
         Changing execute order, type, give one of below:
         "up_to_down", "down_to_up"
@@ -285,7 +287,7 @@ class series_table(series_column):
 
             # if given input is not considerable
             else:
-                message = "Wrong attribute given, choose one of mentioned."
+                message = "Wrong attribute given, choose one of mentioned. [series_table, change_row_order, str] " + str(in_row_order)
                 print(message)
                 return [False, message]
 
@@ -305,7 +307,7 @@ class series_table(series_column):
 
         # if given value is not considerable
         else:
-            message = "Wrong attribute given, choose one of mentioned."
+            message = "Wrong attribute given, choose one of mentioned. [series_table, change_row_order, not] " + str(in_row_order)
             print(message)
             return [False, message]
 

@@ -1,11 +1,12 @@
 from xy_aggregation.xy_aggregation import table_aggregation
 from stat_helpers import stat_helpers
 from simpleNaiveBayes import snb
+from typing import Union
 
 
 class by_strategy:
 
-    def __init__(self, strategy_dict: dict, table: list[list[str]]|bool=False, empty_symbol: str|bool=False):
+    def __init__(self, strategy_dict: dict, table: Union[list[list[str]], bool]=False, empty_symbol: Union[str, bool]=False):
         """
         initiates filling machine. Attributes:
         strategy_dict - dicitionary made by strategies.py
@@ -99,7 +100,7 @@ class by_strategy:
             return [True]
 
 
-    def __error_output(self, message:str|bool = False):
+    def __error_output(self, message:Union[str, bool] = False):
         "Returns message with error."
         if message: return [False, message]
         else: return [False, False]
@@ -132,7 +133,7 @@ class by_strategy:
         return snb.sklearnBasis(self.__temp_X_train, self.__temp_Y_train, self.__temp_X_test)
     
     
-    def __solve_column(self, column_no: int, table: list[list[float]]|bool = False):
+    def __solve_column(self, column_no: int, table: Union[list[list[int]], bool] = False):
         "Solves empty spaces with naive Bayes for selected column."
 
         # buff list

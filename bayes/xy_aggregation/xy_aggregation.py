@@ -1,11 +1,11 @@
-
+from typing import Union
 
 
 
 class table_aggregation:
     "Creates table and returns divided on X_train, Y_train, X_test."
 
-    def __init__(self, table: list[list], Y_train_col: int|bool = False, X_test_row: int|bool = False):
+    def __init__(self, table: list[list], Y_train_col: Union[int, bool] = False, X_test_row: Union[int, bool] = False):
         "Creates table and returns if directed X_train, Y_train, X_test."
 
         # main table
@@ -20,7 +20,7 @@ class table_aggregation:
         if Y_train_col and X_test_row: self.__call__(Y_train_col, X_test_row)
 
 
-    def __call__(self, Y_train_col: int|bool = False, X_test_row: int|bool = False):
+    def __call__(self, Y_train_col: Union[int, bool] = False, X_test_row: Union[int, bool] = False):
         "Returns divided X_train, Y_train, X_test if division done."
 
         # if data for division given
