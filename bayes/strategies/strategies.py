@@ -12,7 +12,7 @@ class one_element:
         """
 
         # default attributes (false if not given)
-        self.__properties_dict = {
+        self._properties_dict = {
                 "strategy":     "one",
                 "percent":      False,
                 "replacement":  False,
@@ -29,8 +29,8 @@ class one_element:
 
     def change_coordinates(self, x: int, y: int):
         "Change coordinates."
-        self.__properties_dict["columns"] = [x]
-        self.__properties_dict["rows"]    = [y]
+        self._properties_dict["columns"] = [x]
+        self._properties_dict["rows"]    = [y]
 
 
     def change_test_percent_existing(self, test_percent_existing: int):
@@ -38,7 +38,7 @@ class one_element:
 
         # if given input is corresponding
         if test_percent_existing >= 0 and test_percent_existing <= 100:
-            self.__properties_dict["percent"] = test_percent_existing
+            self._properties_dict["percent"] = test_percent_existing
             return [True]
 
         # if given value is not considerable
@@ -57,7 +57,7 @@ class one_element:
 
         # if given input is corresponding
         if replacement_type in ["mean", "median" , "zero", "ones", "maximal", "minimal", "dynamic_mean"]:
-            self.__properties_dict["replacement"] = replacement_type
+            self._properties_dict["replacement"] = replacement_type
             return [True]
 
         # if given value is not considerable
@@ -70,7 +70,7 @@ class one_element:
     def give_dict(self):
         "Gives dictionary ready to use by a filling machine."
         # output dictionary:
-        return self.__properties_dict
+        return self._properties_dict
 
 
 
@@ -102,7 +102,7 @@ class series_column(one_element):
 
     def change_column(self, which_column: int):
         "Change column."
-        self.__properties_dict["columns"] = [which_column]
+        self._properties_dict["columns"] = [which_column]
 
 
     def change_row_order(self, row_order: Union[str, list[int]]):
@@ -117,7 +117,7 @@ class series_column(one_element):
 
             # if given input is corresponding
             if row_order in ["up_to_down", "down_to_up"]:
-                self.__properties_dict["rows"] = row_order
+                self._properties_dict["rows"] = row_order
                 return [True]
 
             # if given input is not considerable
@@ -131,7 +131,7 @@ class series_column(one_element):
 
             # if given elements are unique
             if len(row_order) > len(set(row_order)):
-                self.__properties_dict["rows"] = row_order
+                self._properties_dict["rows"] = row_order
                 return [True]
 
             # if given values are not unique
@@ -185,7 +185,7 @@ class series_table(series_column):
 
             # if given input is corresponding
             if column_order in ["up_to_down", "down_to_up"]:
-                self.__properties_dict["columns"] = column_order
+                self._properties_dict["columns"] = column_order
                 return [True]
 
             # if given input is not considerable
@@ -199,7 +199,7 @@ class series_table(series_column):
 
             # if given elements are unique
             if len(column_order) > len(set(column_order)):
-                self.__properties_dict["columns"] = column_order
+                self._properties_dict["columns"] = column_order
                 return [True]
 
             # if given values are not unique
@@ -218,5 +218,5 @@ class series_table(series_column):
     def change_include_results(self, include_results: bool):
         "Changing class parameter, give int in range 0-100."
 
-        self.__properties_dict["results"] = include_results
+        self._properties_dict["results"] = include_results
         return [True]

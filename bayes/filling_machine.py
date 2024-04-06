@@ -54,7 +54,7 @@ class by_strategy:
             "Unpacking dictionary from strategies.py."
 
             # inside function
-            def row_schedule(how: str|list[int]):
+            def row_schedule(how: Union[str, list[int]]):
                 "Creates list with number of rows as schedule or checks if schedule is correct."
 
                 if isinstance(how, str):
@@ -68,7 +68,7 @@ class by_strategy:
                     self.__error_output()
 
             # inside function
-            def column_schedule(how: str|list[int]):
+            def column_schedule(how: Union[str, list[int]]):
                 "Creates list with number of columns as schedule or checks if schedule is correct."
 
                 if isinstance(how, str):
