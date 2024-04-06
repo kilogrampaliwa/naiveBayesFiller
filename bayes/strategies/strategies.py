@@ -12,28 +12,33 @@ class one_element:
         """
 
         # default attributes (false if not given)
-        self.__test_percent_existing = False
-        self.__replacement_type      = False
-        self.__coordinates           = False
+        self.__properties_dict = {
+                "strategy":     "one",
+                "percent":      False,
+                "replacement":  False,
+                "columns":      False,
+                "rows":         False,
+                "results":      False
+            }
 
         # using public functions to save attributes
-        print( test_percent_existing)
         self.change_test_percent_existing(test_percent_existing)
         self.change_test_replace_type(replacement_type)
         if coordinates: self.change_coordinates(coordinates)
 
 
-    def change_coordinates(self, coordinates: list[int, int]):
+    def change_coordinates(self, x: int, y: int):
         "Change coordinates."
-        self.__coordinates = [True, coordinates]
+        self.__properties_dict["columns"] = [x]
+        self.__properties_dict["rows"]    = [y]
 
 
     def change_test_percent_existing(self, test_percent_existing: int):
         "Changing class parameter, give int in range 0-100."
-        print( test_percent_existing)
+
         # if given input is corresponding
         if test_percent_existing >= 0 and test_percent_existing <= 100:
-            self.__test_percent_existing = test_percent_existing
+            self.__properties_dict["percent"] = test_percent_existing
             return [True]
 
         # if given value is not considerable
@@ -52,7 +57,7 @@ class one_element:
 
         # if given input is corresponding
         if replacement_type in ["mean", "median" , "zero", "ones", "maximal", "minimal", "dynamic_mean"]:
-            self.__replacement_type = replacement_type
+            self.__properties_dict["replacement"] = replacement_type
             return [True]
 
         # if given value is not considerable
@@ -62,64 +67,10 @@ class one_element:
             return [False, message]
 
 
-    def give_coordinates(self):
-        "Gives coordinates of unknown item."
-
-        # returns value if attribute defined
-        if self.__coordinates:
-            return [True, self.__coordinates]
-        else:
-            message = "Attribute yet not given."
-            print(message)
-            return [False, message]
-
-
-    def give_test_percent_existing(self):
-        "Gives attirbute: test_percent_existing"
-        
-        # returns value if attribute defined
-        if self.__test_percent_existing: 
-            return [True, self.__test_percent_existing]
-        else:
-            message = "Attribute yet not given."
-            print(message)
-            return [False, message]
-
-
-    def give_replacement_type(self):
-        "Gives attirbute: replacement_type"
-        
-        # returns value if attribute defined
-        if self.__replacement_type: 
-            return [True, self.__replacement_type]
-        else:
-            message = "Attribute yet not given."
-            print(message)
-            return [False, message]
-
-
     def give_dict(self):
         "Gives dictionary ready to use by a filling machine."
-
-        # take and check data
-        tempList = [self.give_test_percent_existing(), self.give_replacement_type(), self.give_coordinates()]
-        if tempList[0][0] and tempList[1][0] and tempList[2][0]:
-
-            # output dictionary:
-            return {
-                "strategy":     "one",
-                "percent":      tempList[0][1],
-                "replacement":  tempList[1][1],
-                "columns":      tempList[2][1][0],
-                "rows":         tempList[2][1][1],
-                "results":      False
-            }
-        
-        # error output
-        else:
-            message = "Error with data in strategy."
-            print(message)
-            return [False, message]
+        # output dictionary:
+        return self.__properties_dict
 
 
 
@@ -150,8 +101,8 @@ class series_column(one_element):
 
 
     def change_column(self, which_column: int):
-        "Change row."
-        self.__column = which_column
+        "Change column."
+        self.__properties_dict["columns"] = [which_column]
 
 
     def change_row_order(self, row_order: Union[str, list[int]]):
@@ -166,7 +117,7 @@ class series_column(one_element):
 
             # if given input is corresponding
             if row_order in ["up_to_down", "down_to_up"]:
-                self.__row_order = row_order
+                self.__properties_dict["rows"] = row_order
                 return [True]
 
             # if given input is not considerable
@@ -180,7 +131,7 @@ class series_column(one_element):
 
             # if given elements are unique
             if len(row_order) > len(set(row_order)):
-                self.__row_order = row_order
+                self.__properties_dict["rows"] = row_order
                 return [True]
 
             # if given values are not unique
@@ -194,54 +145,6 @@ class series_column(one_element):
             message = "Wrong attribute given, choose one of mentioned. [series_column, change_row_order, not] " + str(row_order)
             print(message)
             return [False, message]
-
-
-    def give_row_order(self):
-        "Gives attirbute: in_column_order"
-        
-        # returns value if attribute defined
-        if self.__in_column_order: 
-            return [True, self.__in_column_order]
-        else:
-            message = "Attribute yet not given."
-            print(message)
-            return [False, message]
-
-
-    def give_dict(self):
-        "Gives dictionary ready to use by a filling machine."
-
-        # take and check data
-        tempList = [self.give_test_percent_existing(), self.give_replacement_type(), self.give_row_order(), self.give_column()]
-        if tempList[0][0] and tempList[1][0] and tempList[2][0] and tempList[3][0]:
-
-            # output dictionary:
-            return {
-                "strategy":     "column",
-                "percent":      tempList[0][1],
-                "replacement":  tempList[1][1],
-                "columns":      tempList[2][1],
-                "rows":         tempList[3][1],
-                "results":      False
-            }
-        
-        # error output
-        else:
-            message = "Error with data in strategy."
-            print(message)
-            return [False, message]
-
-
-    def give_column(self):
-        "Gives row."
-        # returns value if attribute defined
-        if self.__row_order:
-            return [True, self.__row_order]
-        else:
-            message = "Attribute yet not given."
-            print(message)
-            return [False, message]
-
 
 
 class series_table(series_column):
@@ -270,7 +173,7 @@ class series_table(series_column):
         self.change_include_results(include_results)
 
 
-    def change_row_order(self, in_row_order: Union[str, list[int]]):
+    def change_column_order(self, column_order: Union[str, list[int]]):
         """
         Changing execute order, type, give one of below:
         "up_to_down", "down_to_up"
@@ -278,11 +181,11 @@ class series_table(series_column):
         """
 
         # if given input is str
-        if isinstance(in_row_order, str):
+        if isinstance(column_order, str):
 
             # if given input is corresponding
-            if in_row_order in ["up_to_down", "down_to_up"]:
-                self.__in_row_order = in_row_order
+            if column_order in ["up_to_down", "down_to_up"]:
+                self.__properties_dict["columns"] = column_order
                 return [True]
 
             # if given input is not considerable
@@ -292,11 +195,11 @@ class series_table(series_column):
                 return [False, message]
 
         # if given input is list
-        elif isinstance(in_row_order, list):
+        elif isinstance(column_order, list):
 
             # if given elements are unique
-            if len(in_row_order) > len(set(in_row_order)):
-                self.__in_column_order = in_row_order
+            if len(column_order) > len(set(column_order)):
+                self.__properties_dict["columns"] = column_order
                 return [True]
 
             # if given values are not unique
@@ -312,49 +215,8 @@ class series_table(series_column):
             return [False, message]
 
 
-    def give_in_row_order(self):
-        "Gives attirbute: in_row_order"
-        
-        # returns value if attribute defined
-        if self.__in_row_order: 
-            return [True, self.__in_row_order]
-        else:
-            message = "Attribute yet not given."
-            print(message)
-            return [False, message]
-
-
     def change_include_results(self, include_results: bool):
         "Changing class parameter, give int in range 0-100."
 
-        self.__include_results = include_results
+        self.__properties_dict["results"] = include_results
         return [True]
-
-
-    def give_include_results(self):
-        "Gives attirbute: include_results"
-        return [True, self.__include_results]
-
-
-    def give_dict(self):
-        "Gives dictionary ready to use by a filling machine."
-
-        # take and check data
-        tempList = [self.give_test_percent_existing(), self.give_replacement_type(), self.give_in_column_order(), self.give_in_row_order(), self.give_include_results()]
-        if tempList[0][0] and tempList[1][0] and tempList[2][0] and tempList[3][0] and tempList[4][0]:
-
-            # output dictionary:
-            return {
-                "strategy":     "table",
-                "percent":      tempList[0][1],
-                "replacement":  tempList[1][1],
-                "columns":      tempList[2][1],
-                "rows":         tempList[3][1],
-                "results":      tempList[4][1]
-            }
-        
-        # error output
-        else:
-            message = "Error with data in strategy."
-            print(message)
-            return [False, message]
