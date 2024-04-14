@@ -12,109 +12,45 @@ class by_strategy:
         strategy_dict - dicitionary made by strategies.py
 
         """
-        #raw data
-        self.__raw_table = False
+
+        self.__strategy_dict = strategy_dict
 
         # empty symbol
-        self.__emptySymb = False
+        self.__emptySymb = empty_symbol
+
+        # raw data
+        self.__raw_table = self.__remove_ns(table)
 
         # temp sets
         self.__temp_X_train  =   []
         self.__temp_Y_train  =   []
         self.__temp_X_test   =   []
 
-        # strategy settings
-        self.changeStrategy(strategy_dict)
-        if empty_symbol: self.changeEmptySymmbol(empty_symbol)
-        if table: self.changeTable(table)
+        # out table
+        self.__out_table = False
 
 
-    def changeStrategy(self, strategy_dict: dict):
-        "Changes approach to table filling."
+    def __call__(self):
+        "Runs the program anyway."
 
-        output = self.__unpack_dict(strategy_dict)
-        if output[0]: return [True]
-        else: return output
+        if   self.__strategy_dict["strategy"] == "one":     self.__runOne()
+        elif self.__strategy_dict["strategy"] == "column":  self.__runColumn()
+        elif self.__strategy_dict["strategy"] == "table":   self.__runTable()
 
-
-    def changeEmptySymmbol(self, eempty_symbol: str):
-        "Replaces symbol of empty element."
-
-        self.__emptySymb = eempty_symbol
+        return self.__out_table
 
 
-    def changeTable(self, table: list[list[str]]):
-        "Changes input table."
-
-        self.__raw_table = table
-        self.__output_table = self.__raw_table.copy()
-
-
-    def __unpack_dict(self, dictionary: dict):
-            "Unpacking dictionary from strategies.py."
-
-            # inside function
-            def row_schedule(how: Union[str, list[int]]):
-                "Creates list with number of rows as schedule or checks if schedule is correct."
-
-                if isinstance(how, str):
-                    if    how=="up_to_down":     return [True, range(0, len(self.__table))]
-                    elif  how=="down_to_up":     return [True, range(len(self.__table)-1, -1)]
-                    else: self.__error_output("Wrong schedeule.")
-                elif isinstance(how, list[int]):
-                    if how.copy().sort() == range(0, len(self.__table)): return [True, how]
-                    else: self.__error_output("Wrong length of schedeule.")
-                else:
-                    self.__error_output()
-
-            # inside function
-            def column_schedule(how: Union[str, list[int]]):
-                "Creates list with number of columns as schedule or checks if schedule is correct."
-
-                if isinstance(how, str):
-                    if    how=="left_to_right":     return [True, range(0, len(self.__table[0]))]
-                    elif  how=="right_to_left":     return [True, range(len(self.__table[0])-1, -1)]
-                    else: self.__error_output("Wrong schedeule.")
-                elif isinstance(how, list[int]):
-                    if how.copy().sort() == range(0, len(self.__table[0])): return [True, how]
-                    else: self.__error_output("Wrong length of schedeule.")
-                else:
-                    self.__error_output()
-
-            # function
-            #
-
-            self.__percent      =   dictionary["percent"]
-            self.__replacement  =   dictionary["replacement"]
-            self.__results      =   dictionary["results"]
-
-            rows = row_schedule(dictionary["rows"])
-            columns = column_schedule(dictionary["columns"])
-
-            if rows[0]:
-                self.__rows = rows[1]
-                if columns[0]: self.__columns = columns[1]
-                else: return columns
-            else: return rows
-
-            return [True]
-
-
-    def __error_output(self, message:Union[str, bool] = False):
-        "Returns message with error."
-        if message: return [False, message]
-        else: return [False, False]
-
-
-    def __solve_single_Bayes(self, coordinates: list[int]):
+    def __solve_single_Bayes(self,x: int, y: int):
         "Solves Bayes for single coordinate."
 
         # temporary buff table to pick all X sets that has result in Y_test
         X_train_temp = []
         Y_train_temp = []
 
+        aggregator =  table_aggregation(self.__raw_table)
+
         # division od big table into smaller groups
-        X_train_temp, Y_train_temp, self.__temp_X_test = table_aggregation(self.__raw_table, coordinates[1], coordinates[0])
+        X_train_temp, Y_train_temp, self.__temp_X_test = aggregator(x, y)
 
         # adding lists to training groups if there is a solution in Y_train
         for i in range(len(Y_train_temp)):
@@ -123,43 +59,79 @@ class by_strategy:
                 self.__temp_Y_train.append(Y_train_temp[i])
 
         # filling X_train list
-        for i in range(len(self.__temp_X_train)):
-            self.__temp_X_train[i] = stat_helpers.fill_array(self.__temp_X_train[i], self.__emptySymb, self.__replacement)
-        
+        for i, n in enumerate(self.__temp_X_train):
+            self.__temp_X_train[i] = stat_helpers.fill_array(n, self.__emptySymb, self.__strategy_dict["replacement"])
+
         # filling X_test list
-        self.__temp_X_test = stat_helpers.fill_array(self.__temp_X_test, self.__emptySymb, self.__replacement)
+        self.__temp_X_test = stat_helpers.fill_array(self.__temp_X_test, self.__emptySymb, self.__strategy_dict["replacement"])
 
         # result
-        return snb.sklearnBasis(self.__temp_X_train, self.__temp_Y_train, self.__temp_X_test)
-    
-    
-    def __solve_column(self, column_no: int, table: Union[list[list[int]], bool] = False):
-        "Solves empty spaces with naive Bayes for selected column."
-
-        # buff list
-        new_values = []
-
-        # table to work on
-        if table: table = table
-        else: table = self.__raw_table.copy()
-
-        for i in range(len(table)):
-
-            if table[i]==self.__emptySymb:   new_values.append([i, self.__solve_single_Bayes([i,column_no])])
-            else:                            new_values.append([i, table[i]])
-
-        for x in new_values:    self.__output_table[x[0]][column_no] = x[1]
-    
-
-    def __solve_table(self):
-        "Solves full table."
-
-        for i in range(len(self.__raw_table)):
-            if self.__results: self.__solve_column(i, self.__output_table)
-            else:              self.__solve_column(i, self.__raw_table)
+        bayes = snb.sklearnBasis(self.__temp_X_train, self.__temp_Y_train, self.__temp_X_test)
+        return bayes()
 
 
-# 1 solve bayes
-# 2 every row in column
-# 3 every column
+    def __remove_ns(self, table):
+        "Removing \n from table."
+        out_table = []
+        for n in table:
+            new_line = []
+            for m in n:
+                if '\n' not in m:   new_line.append(m)
+                else:               new_line.append(m[0])
+            out_table.append(new_line)
+        return out_table
+
+
+    def __runOne(self, x: Union[int, bool] = False, y: Union[int, bool] = False, new_table: Union[list[list], bool] = False):
+        "Runs Naive Bayes for only one element."
+
+        outTable = []
+        if new_table:   outTable = new_table
+        else:           outTable = self.__raw_table.copy()
+        
+        result = []
+        if isinstance(x, int) and isinstance(y, int):
+            result = self.__solve_single_Bayes(x, y)[0]
+        else:
+            result = self.__solve_single_Bayes(self.__strategy_dict["columns"], self.__strategy_dict["rows"])[0]
+
+        if isinstance(x, bool): x = self.__strategy_dict["rows"]
+        if isinstance(y, bool): y = self.__strategy_dict["columns"]
+
+        outTable[y][x] =  result
+
+        self.__out_table =  outTable
+
+
+    def __runColumn(self, x: Union[int, bool] = False, new_table: Union[list[list], bool] = False):
+        "Runs Naive Bayes for selected column."
+
+        inTable = []
+        if new_table:       inTable = new_table
+        else:               inTable = self.__raw_table.copy()
+
+        if   self.__strategy_dict["rows"] == "up_to_down": self.__strategy_dict["rows"] = [i for i in range(len(inTable))          ]
+        elif self.__strategy_dict["rows"] == "down_to_up": self.__strategy_dict["rows"] = [i for i in range(len(inTable)-1, -1, -1)]
+
+        for y in self.__strategy_dict["rows"]:
+            if self.__strategy_dict["results"]:     inTable = self.__out_table.copy()
+            else:                                   inTable = self.__raw_table.copy()
+
+            if self.__raw_table[y][x]==self.__emptySymb:
+                self.__runOne(x, y, inTable)
+
+
+    def __runTable(self):
+        "Runs Naive Bayes for whole table."
+
+        inTable = []
+        inTable = self.__raw_table.copy()
+
+        if   self.__strategy_dict["columns"] == "left_to_right": self.__strategy_dict["columns"] = [i for i in range(len(inTable[0]))          ]
+        elif self.__strategy_dict["columns"] == "right_to_left": self.__strategy_dict["columns"] = [i for i in range(len(inTable[0])-1, -1, -1)]
+
+        for x in self.__strategy_dict["columns"]:
+            if self.__strategy_dict["results"]:     inTable = self.__out_table.copy()
+            else:                                   inTable = self.__raw_table.copy()
+            self.__runColumn(x, inTable)
 

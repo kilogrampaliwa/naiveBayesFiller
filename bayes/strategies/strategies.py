@@ -91,6 +91,8 @@ class series_column(one_element):
         super().__init__(False, test_percent_existing=test_percent_existing, replacement_type=replacement_type)
         #super().__init__(test_percent_existing, replacement_type)
 
+        self._properties_dict["strategy"] = "column"
+
         # default attributes (false if not given)
         self.__row_order       = False
         self.__column             = False
@@ -166,10 +168,11 @@ class series_table(series_column):
 
         # default attributes (false if not given)
         self.__in_row_order         = False
-        self.__include_results      = False
+        self._properties_dict["strategy"] = "table"
 
         # using public functions to save attributes
         self.change_row_order(in_row_order)
+        self.change_column_order(in_column_order)
         self.change_include_results(include_results)
 
 
@@ -184,13 +187,13 @@ class series_table(series_column):
         if isinstance(column_order, str):
 
             # if given input is corresponding
-            if column_order in ["up_to_down", "down_to_up"]:
+            if column_order in ["left_to_right", "right_to_left"]:
                 self._properties_dict["columns"] = column_order
                 return [True]
 
             # if given input is not considerable
             else:
-                message = "Wrong attribute given, choose one of mentioned. [series_table, change_row_order, str] " + str(in_row_order)
+                message = "Wrong attribute given, choose one of mentioned. [series_table, change_row_order, str] " + str(self.__in_row_order)
                 print(message)
                 return [False, message]
 
@@ -210,7 +213,7 @@ class series_table(series_column):
 
         # if given value is not considerable
         else:
-            message = "Wrong attribute given, choose one of mentioned. [series_table, change_row_order, not] " + str(in_row_order)
+            message = "Wrong attribute given, choose one of mentioned. [series_table, change_row_order, not] " + str(self.__in_row_order)
             print(message)
             return [False, message]
 

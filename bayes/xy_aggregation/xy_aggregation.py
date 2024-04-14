@@ -1,11 +1,9 @@
-from typing import Union
-
 
 
 class table_aggregation:
     "Creates table and returns divided on X_train, Y_train, X_test."
 
-    def __init__(self, table: list[list], x: Union[int, bool] = False, y: Union[int, bool] = False):
+    def __init__(self, table: list[list]):
         "Creates table and returns if directed X_train, Y_train, X_test."
 
         # main table
@@ -16,20 +14,22 @@ class table_aggregation:
         self.__Y_train  = []
         self.__X_test   = []
 
-        # if data for division already given
-        if isinstance(x, int) and isinstance(y, int): self.__call__(x, y)
 
-
-    def __call__(self,  x: Union[int, bool] = False, y: Union[int, bool] = False):
+    def __call__(self,  x: int, y: int):
         "Returns divided X_train, Y_train, X_test if division done."
 
+        print("call")
+        print(x, y)
         # if data for division given
         if isinstance(x, int) and isinstance(y, int):
+            print("ok1")
             self.divide(x, y)
+            print("ok2")
             return self.__X_train, self.__Y_train, self.__X_test
 
         # just returns existing data
         elif self.__X_train!=[] and self.__Y_train!=[] and self.__X_test!=[]:
+            print("ok")
             return self.__X_train, self.__Y_train, self.__X_test
 
         # results do not exist

@@ -19,9 +19,10 @@ class sklearnBasis:
         if X_test: self.__call__(X_test)
 
 
-    def __call__(self, X_test : list[int]):
+    def __call__(self, X_test : Union[list[int], bool]=False):
         "Returns prediction based on trained model."
-        self.__prediction(X_test)
+        if X_test:
+            self.__prediction(X_test)
         return self.__result
 
 
@@ -32,7 +33,7 @@ class sklearnBasis:
 
     def __prediction(self, X_test : list[int]):
         "Prediction based on trained model."
-        self.__result = self.__clf.predict(X_test)
+        self.__result = self.__clf.predict([X_test,])
         #self.__result = self.__clf.predict_proba(X_test)
 
 
