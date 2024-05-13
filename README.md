@@ -77,12 +77,8 @@ print(filled_table)
 
 ## Contribution
 
-Contributions to Simple Naive Bayes are welcome! If you find any issues or have suggestions for improvements, feel free to open an issue or create a pull request on the [GitHub repository](https://github.com/example/simpleNaiveBayes).
+Contributions to Simple Naive Bayes are welcome! If you find any issues or have suggestions for improvements, feel free to open an issue or create a pull request on the [GitHub repository](https://github.com/kilogrampaliwa/naiveBayesFiller)).
 
 ## License
 
-Simple Naive Bayes is licensed under the MIT License. See the [LICENSE](https://github.com/example/simpleNaiveBayes/blob/main/LICENSE) file for details.
-
-## Contact
-
-For any inquiries or support, you can reach out to [author@example.com](mailto:author@example.com).
+This project id under MiT License.
